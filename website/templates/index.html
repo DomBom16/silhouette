@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+
+    <title>SilhouetteAI</title>
+    <link
+      rel="stylesheet"
+      href="../style.css"
+    />
+
+    <link
+      rel="shortcut icon"
+      href="img/logo.svg"
+      type="image/x-icon"
+    />
+  </head>
+
+  <body>
+    <script>
+      // Execute the following code once the DOM content is fully loaded
+      window.addEventListener('DOMContentLoaded', function () {
+        // Variables to store the current mouse coordinates
+        var mouseX;
+        var mouseY;
+
+        // Select the cursor element and all links with the class 'hover-link'
+        const cursor = document.querySelector('.cursor');
+        const cursorSmall = document.querySelector('.cursorSmall');
+
+        document.querySelectorAll('a, button, input').forEach((link) => {
+          link.addEventListener('mouseenter', () => {
+            // If the cursor overlaps with a link, scale down the cursor
+            cursor.style.width = '4rem';
+            cursor.style.height = '4rem';
+          });
+
+          link.addEventListener('mouseleave', () => {
+            // If the cursor doesn't overlap with a link, restore cursor size
+            cursor.style.width = '2.5rem';
+            cursor.style.height = '2.5rem';
+          });
+        });
+
+        // Handle mouse movement event
+        onmousemove = function (e) {
+          mouseX = e.clientX; // Update mouse X coordinate
+          mouseY = e.clientY; // Update mouse Y coordinate
+
+          // Check for overlap with each link
+        };
+
+        // Calculate scrolling percentage
+        const h = document.documentElement,
+          b = document.body,
+          st = 'scrollTop',
+          sh = 'scrollHeight';
+
+        const height = h.clientHeight;
+
+        var percent = (h[st] || b[st]) / ((h[sh] || b[sh]) - height);
+
+        // Scale and adjust margin of footer based on scrolling percentage
+        const footerScale = 128;
+        const footer = document.querySelector('footer');
+
+        onscroll = function () {
+          // Calculate scrolling percentage
+          const h = document.documentElement,
+            b = document.body,
+            st = 'scrollTop',
+            sh = 'scrollHeight';
+
+          const height = h.clientHeight;
+
+          var percent = Math.ceil(h[st] || b[st]) / ((h[sh] || b[sh]) - height);
+
+          // Scale and adjust margin of footer based on scrolling percentage
+          const footerScale = 32;
+
+          footer.style.margin = footerScale - percent * footerScale + 'px';
+          footer.style.borderRadius = footerScale - percent * footerScale + 'px';
+          // footer.style.filter = `blur(${footerScale / 4 - (percent * footerScale / 4) + "px"})`
+          footer.style.marginBottom = 0;
+          footer.style.marginTop = 0;
+
+          // Change scale on scroll
+          content.style.filter = `blur(${footerScale - percent * footerScale}px)`;
+          content.style.opacity = percent * 2 - 1;
+        };
+
+        window.dispatchEvent(new Event('scroll'));
+
+        // Additional animations and adjustments to elements on the page
+        const name = document.querySelector('.logo span');
+        const logo = document.querySelector('.logo svg');
+        const content = document.querySelector('footer .content');
+
+        // Get the width of the name element
+        const nameW = name.offsetWidth;
+
+        // Execute the following code repeatedly
+        setInterval(() => {
+          // Adjust logo size, opacity, and filters based on scrolling
+          logo.style.width = window.scrollY ? 0 : `3rem`;
+          // name.style.opacity = window.scrollY ? 0 : 1;
+          logo.style.filter = window.scrollY ? 'blur(12px)' : 'none';
+          // name.style.filter = window.scrollY ? "blur(5px)" : "none";
+          logo.style.scale = window.scrollY ? 0.5 : 1;
+          name.style.scale = window.scrollY ? 1.1 : 1;
+
+          // Adjust spacing within the logo based on scrolling
+          document.querySelector('.logo').style.columnGap = window.scrollY ? 0 : '1rem';
+
+          // Change the amount of easing on scroll events
+          const scrollEase = 25;
+          const scrollEaseSmall = 2;
+
+          // Adjust cursor position based on scrolling and mouse movement
+          cursor.style.top = (parseFloat(cursor.style.top) || 0) - window.scrollY + 'px';
+          cursor.style.top =
+            (mouseY - (parseFloat(cursor.style.top) || 0)) / scrollEase +
+            (parseFloat(cursor.style.top) || 0) +
+            'px';
+          cursor.style.top = (parseFloat(cursor.style.top) || 0) + window.scrollY + 'px';
+          cursor.style.left =
+            (mouseX - (parseFloat(cursor.style.left) || 0)) / scrollEase +
+            (parseFloat(cursor.style.left) || 0) +
+            'px';
+
+          // Adjust cursorSmall position based on scrolling and mouse movement
+          cursorSmall.style.top = (parseFloat(cursorSmall.style.top) || 0) - window.scrollY + 'px';
+          cursorSmall.style.top =
+            (mouseY - (parseFloat(cursorSmall.style.top) || 0)) / scrollEaseSmall +
+            (parseFloat(cursorSmall.style.top) || 0) +
+            'px';
+          cursorSmall.style.top = (parseFloat(cursorSmall.style.top) || 0) + window.scrollY + 'px';
+          cursorSmall.style.left =
+            (mouseX - (parseFloat(cursorSmall.style.left) || 0)) / scrollEaseSmall +
+            (parseFloat(cursorSmall.style.left) || 0) +
+            'px';
+
+          // Adjust small cursor opacity based on distance to cursor
+          const dx = Math.abs(parseFloat(cursorSmall.style.left) - parseFloat(cursor.style.left));
+          const dy = Math.abs(parseFloat(cursorSmall.style.top) - parseFloat(cursor.style.top));
+          const distance = Math.sqrt(dx * dx + dy * dy);
+
+          if (distance < 20) {
+            cursorSmall.style.left = cursor.style.left;
+            cursorSmall.style.top = cursor.style.top;
+            cursorSmall.style.width = parseFloat(cursor.style.width) - 0.5 + 'rem';
+            cursorSmall.style.height = parseFloat(cursor.style.height) - 0.5 + 'rem';
+          } else {
+            cursorSmall.style.width = '0.5rem';
+            cursorSmall.style.height = '0.5rem';
+          }
+        }, 0);
+
+        const body = document.querySelector('body');
+
+        // Disable scrolling temporarily
+        body.style.overflow = 'hidden';
+        body.style.height = window.innerHeight + 'px';
+
+        // Re-enable scrolling after a delay
+        setTimeout(() => {
+          body.style.height = 'auto';
+          body.style.overflow = '';
+        }, 3000);
+
+        // Scroll to the top of the page after a delay
+        setTimeout(() => {
+          window.scrollTo({ top: 0 });
+        }, 600);
+      });
+    </script>
+    <header>
+      <nav>
+        <div class="logo">
+          <svg
+            viewBox="0 0 72 72"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M36 2.93856C36 1.31564 34.6797 -0.0124565 33.062 0.117486C14.5225 1.60667 0 17.0693 0 36C0 54.9307 14.5225 70.3933 33.062 71.8825C34.6797 72.0125 36 70.6844 36 69.0614V2.93856Z"
+              fill="currentColor"
+            />
+          </svg>
+          <span>Silhouette</span>
+        </div>
+      </nav>
+      <div class="hero">
+        <h1 class="hero-title blur-in">
+          <span class="hero-title-accent">A friend</span>
+          <span>that is always around</span>
+        </h1>
+        <span class="hero-body blur-in">
+          Imagine a friend who can hang out with you, at any time. A friend that knows you better
+          than anyone else, with the power to adapt and evolve according to your needs. That's
+          exactly what Silhouette offers. Whether it's for fun, productivity, or even just a
+          listening ear, Silhouette is here to talk with you.
+        </span>
+        <a class="hero-cta blur-in hover-link"> Try it out &rarr; </a>
+      </div>
+    </header>
+    <main>
+      <!-- ...  -->
+    </main>
+    <footer>
+      <div class="content">
+        <img
+          src="../img/SILHOUETTE.svg"
+          alt="Silhouette"
+        />
+        <div>
+          <div class="tagline">A friend that knows you better than anyone else.</div>
+          <div class="copyright">Made with love in Massachusetts</div>
+        </div>
+      </div>
+    </footer>
+    <div class="cursor"></div>
+    <div class="cursorSmall"></div>
+  </body>
+</html>
