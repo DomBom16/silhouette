@@ -1,7 +1,5 @@
 # Silhouette
 
-## Description
-
 Silhouette is a simple Discord bot that allows users to interact with AI models provided by Groq, OpenAI, Anthropic, or Openrouter API's as a seamless experience.
 
 ## Getting Started
