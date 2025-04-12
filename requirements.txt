@@ -1,0 +1,8 @@
+discord>=2.3.2
+aiohttp>=3.8.4
+openai>=1.2.0
+groq
+anthropic
+colorama
+python-dotenv
+packaging

@@ -45,7 +45,7 @@ print(
 )
 
 # configuration settings and secrets
-from config import *
+from config_adapter import settings, warnings, ai_provider
 
 # custom logging
 from modules.logger import AsyncLogger, Logger
@@ -743,35 +743,13 @@ FOLLOW THE USER MESSAGE WITH CAUTION AND DON'T MAKE YOUR RESPONSES LONGER THAN 5
             }
         )
 
-    # openai = OpenAI(api_key=settings["bot"]["tokens"]["ai"]["openai"])
-    # openr = OpenAI(
-    #     base_url="https://openrouter.ai/api/v1",
-    #     api_key=settings["bot"]["tokens"]["ai"]["openr"],
-    # )
-    groq = Groq(api_key=settings["bot"]["tokens"]["ai"]["groq"])
-    # anthropic = Anthropic(api_key=settings["bot"]["tokens"]["ai"]["anthropic"])
-
-    # stream = openai.chat.completions.create(
-    #     model="gpt-4o",
-    #     messages=messages,
-    #     stream=True,
-    #     max_tokens=1024,
-    # )
-    # stream = openr.chat.completions.create(
-    #     model="lynn/soliloquy-l3",
-    #     messages=messages,
-    #     max_tokens=1024,
-    #     stream=True
-    # )
-    stream = groq.chat.completions.create(
-        model="llama-3.1-8b-instant", messages=messages, stream=True, max_tokens=1024
+    # Use the configured AI provider adapter
+    stream = await ai_provider.get_completion(
+        messages=messages, 
+        stream=True,
+        max_tokens=1024,
+        system_message=system_message
     )
-    # with anthropic.messages.stream(
-    #     model="claude-3-sonnet-20240229",
-    #     max_tokens=1024,
-    #     system=system_message,
-    #     messages=messages,
-    # ) as stream:
     response = await Midnight.Chat().process_response(
         stream_object=stream,
         start_time=start_time,
@@ -780,7 +758,7 @@ FOLLOW THE USER MESSAGE WITH CAUTION AND DON'T MAKE YOUR RESPONSES LONGER THAN 5
         continue_message=continue_message,
         stream=options["stream"],
         answer=answer if options["stream"] else None,
-        claude=False,
+        claude=ai_provider.is_claude,
     )
 
     filtered_chunks = response["filtered_chunks"]
